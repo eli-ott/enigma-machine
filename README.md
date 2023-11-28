@@ -1,5 +1,6 @@
-# enigma-machine
-A remake of Turing's Enigma machine using Typescript and an HTML interface
+# Enigma Machine
+A remake of Turing's Enigma machine using Typescript and an HTML interface <br />
+This version will have 5 rotors a static wheel and the other usual things like a plugboard, the keyboard and the reflector
 
 
 
