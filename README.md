@@ -1,5 +1,5 @@
 # Enigma I - A remake with programmation
-A remake of Turing's Enigma machine using Typescript and an HTML interface <br />
+A remake of Turing's Enigma machine using Typescript and a Svelte interface <br />
 This version will have 5 rotors choices but 3 active ones a static wheel and the other usual things like a plugboard, the keyboard and the reflector
 
 
