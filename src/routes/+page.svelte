@@ -69,11 +69,14 @@
           return connection;
         }
       });
+
       //getting the index of the connection that contains the letter
-      plugboard.connections.splice(
-        plugboard.connections.indexOf(connection[0]),
-        1
-      );
+      if (connection.length > 0) {
+        plugboard.connections.splice(
+          plugboard.connections.indexOf(connection[0]),
+          1
+        );
+      }
 
       //updating the pluggedLetters according to the plugboard connections
       pluggedLetters = plugboard.connections.join("");
