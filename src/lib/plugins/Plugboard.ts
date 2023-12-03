@@ -6,7 +6,7 @@ export class Plugboard {
    *
    * @param {string[]} connections The plugboard connections
    */
-  constructor(connections: string[]) {
+  constructor(connections: string[] = []) {
     this.connections = connections;
   }
 
