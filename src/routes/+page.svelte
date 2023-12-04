@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { Plugboard } from "$lib/plugins";
+  import { Plugboard, ReflectorA } from "$lib/plugins";
 
   /** The plugboard*/
   let plugboard = new Plugboard();
   /** The alphabet */
-  let alphabet: string = "abcdefghijklmnopqrstuvwxyz";
+  const alphabet: string = "abcdefghijklmnopqrstuvwxyz";
   /** The key pressed by the user */
   let currentKey: string = "";
   /** The user input's history */
@@ -14,43 +13,33 @@
   let cipheredKeyHistory: string[] = [];
   /** The letters in order */
   let plugboardLetters: string[] = ["qwertzuio", "asdfghjk", "pyxcvbnml"];
-  /** A single connection on the plugboard */
-  let connection: string = "";
-  /** The connections of the plugboard */
-  let connections: string[] = [];
   /** The letters that have a connection */
   let pluggedLetters: string = "";
 
   /**
-   * On mount
-   */
-  onMount(() => {
-    initKeyPress();
-  });
-
-  /**
    * Initializing the key press event
    */
-  const initKeyPress = () => {
-    window.addEventListener("keydown", (event) => {
-      //only allowing one key press at a time
-      if (event.repeat) return;
+  const manageKeyPress = (event) => {
+    //only allowing one key press at a time
+    if (event.repeat) return;
 
-      let pressedKey = event.key.toLowerCase();
+    let pressedKey = event.key.toLowerCase();
 
-      //changing the pressed key only if it is in the alphabet
-      if (alphabet.includes(pressedKey)) {
-        //keeping track of the current key and all the key pressed previously
-        currentKey = pressedKey;
-        pressedKeyHistory = [...pressedKeyHistory, currentKey];
+    //changing the pressed key only if it is in the alphabet
+    if (alphabet.includes(pressedKey)) {
+      //the key to cipher
+      let cipherKey: string;
+      //keeping track of the current key and all the key pressed previously
+      currentKey = cipherKey = pressedKey;
+      pressedKeyHistory = [...pressedKeyHistory, currentKey];
 
-        //adding the ciphered key to an array
-        cipheredKeyHistory = [
-          ...cipheredKeyHistory,
-          plugboard.swap(currentKey),
-        ];
-      }
-    });
+      cipherKey = plugboard.swap(cipherKey);
+      cipherKey = ReflectorA.reflect(cipherKey);
+      cipherKey = plugboard.swap(cipherKey);
+
+      //adding the ciphered key to an array
+      cipheredKeyHistory = [...cipheredKeyHistory, cipherKey];
+    }
   };
 
   /**
@@ -93,6 +82,11 @@
   };
 </script>
 
+<svelte:window
+  on:keydown={($event) => {
+    manageKeyPress($event);
+  }}
+/>
 <section class="enigma">
   <p>
     Press any key : {currentKey} <br />
@@ -113,7 +107,7 @@
               manageConnections(letter);
             }}
             on:keydown={() => {
-              manageConnections(letter);
+              return;
             }}
           >
             {letter}
