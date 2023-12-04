@@ -3,7 +3,7 @@
  */
 class Reflector {
   /** The reflector wiring */
-  wiring: string;
+  protected wiring: string;
   /** The alphabet */
   private readonly alphabet: string = "abcdefghijklmnopqrstuvwxyz";
 
@@ -36,4 +36,6 @@ const ReflectorA = new Reflector("ejmzalyxvbwfcrquontspikhgd");
 const ReflectorB = new Reflector("yruhqsldpxngokmiebfzcwvjat");
 const ReflectorC = new Reflector("fvpjiaoyedrzxwgctkuqsbnmhl");
 
-export { ReflectorA, ReflectorB, ReflectorC };
+export default {
+  Reflectors: [ReflectorA, ReflectorB, ReflectorC],
+};

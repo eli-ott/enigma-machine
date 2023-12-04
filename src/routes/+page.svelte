@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { Plugboard, ReflectorA } from "$lib/plugins";
+  import { Plugboard } from "$lib/plugins/Plugboard";
+  import { default as obj } from "$lib/plugins/Reflector";
 
-  /** The plugboard*/
-  let plugboard = new Plugboard();
   /** The alphabet */
   const alphabet: string = "abcdefghijklmnopqrstuvwxyz";
   /** The key pressed by the user */
@@ -11,14 +10,20 @@
   let pressedKeyHistory: string[] = [];
   /** The user ciphered keys */
   let cipheredKeyHistory: string[] = [];
+  /** The plugboard*/
+  const plugboard = new Plugboard();
   /** The letters in order */
-  let plugboardLetters: string[] = ["qwertzuio", "asdfghjk", "pyxcvbnml"];
+  const plugboardLetters: string[] = ["qwertzuio", "asdfghjk", "pyxcvbnml"];
   /** The letters that have a connection */
   let pluggedLetters: string = "";
+  /** The available reflectors */
+  const { Reflectors } = obj;
+  /** The reflector used */
+  let reflectorIndex: number = 0;
 
   /**
    * Initializing the key press event
-   * 
+   *
    * @param {KeyboardEvent} event The key event
    */
   const manageKeyPress = (event: KeyboardEvent) => {
@@ -36,7 +41,7 @@
       pressedKeyHistory = [...pressedKeyHistory, currentKey];
 
       cipherKey = plugboard.swap(cipherKey);
-      cipherKey = ReflectorA.reflect(cipherKey);
+      cipherKey = Reflectors[reflectorIndex].reflect(cipherKey);
       cipherKey = plugboard.swap(cipherKey);
 
       //adding the ciphered key to an array
@@ -95,6 +100,10 @@
     Your pressed keys : {pressedKeyHistory.join("")} <br />
     Your ciphered keys : {cipheredKeyHistory.join("")}
   </p>
+
+  <input type="radio" bind:group={reflectorIndex} value={0} name="reflector" />
+  <input type="radio" bind:group={reflectorIndex} value={1} name="reflector" />
+  <input type="radio" bind:group={reflectorIndex} value={2} name="reflector" />
 
   <div class="plugboard">
     {#each plugboardLetters as letterGroup}
