@@ -18,8 +18,10 @@
 
   /**
    * Initializing the key press event
+   * 
+   * @param {KeyboardEvent} event The key event
    */
-  const manageKeyPress = (event) => {
+  const manageKeyPress = (event: KeyboardEvent) => {
     //only allowing one key press at a time
     if (event.repeat) return;
 

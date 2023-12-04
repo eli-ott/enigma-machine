@@ -1,3 +1,6 @@
+/**
+ * The Plugboard class
+ */
 export class Plugboard {
   /** The plugboard connections */
   connections: string[];
