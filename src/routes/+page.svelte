@@ -1,9 +1,12 @@
 <script lang="ts">
   import { Plugboard } from "$lib/plugins/Plugboard";
-  import { default as obj } from "$lib/plugins/Reflector";
+  import { default as ReflectorsList } from "$lib/plugins/Reflector";
+  import { Rotor, default as RotorsList } from "$lib/plugins/Rotor";
 
   /** The alphabet */
   const alphabet: string = "abcdefghijklmnopqrstuvwxyz";
+  /** If the machine is active and can be used */
+  let machineActive: boolean = false;
   /** The key pressed by the user */
   let currentKey: string = "";
   /** The user input's history */
@@ -11,15 +14,19 @@
   /** The user ciphered keys */
   let cipheredKeyHistory: string[] = [];
   /** The plugboard*/
-  const plugboard = new Plugboard();
+  const plugboard: Plugboard = new Plugboard();
   /** The letters in order */
   const plugboardLetters: string[] = ["qwertzuio", "asdfghjk", "pyxcvbnml"];
   /** The letters that have a connection */
   let pluggedLetters: string = "";
   /** The available reflectors */
-  const { Reflectors } = obj;
+  const { Reflectors } = ReflectorsList;
   /** The reflector used */
   let reflectorIndex: number = 0;
+  /** The available rotors */
+  const { Rotors } = RotorsList;
+  /** The reflector used in the machine */
+  let usedRotors: Rotor[] = [];
 
   /**
    * Initializing the key press event
@@ -28,7 +35,7 @@
    */
   const manageKeyPress = (event: KeyboardEvent) => {
     //only allowing one key press at a time
-    if (event.repeat) return;
+    if (event.repeat || !machineActive) return;
 
     let pressedKey = event.key.toLowerCase();
 
@@ -41,6 +48,7 @@
       pressedKeyHistory = [...pressedKeyHistory, currentKey];
 
       cipherKey = plugboard.swap(cipherKey);
+      cipherKey = usedRotors[0].cipher(cipherKey);
       cipherKey = Reflectors[reflectorIndex].reflect(cipherKey);
       cipherKey = plugboard.swap(cipherKey);
 
@@ -87,6 +95,33 @@
     if (pluggedLetters.length % 2 === 0)
       plugboard.connections = pluggedLetters.match(/.{1,2}/g) || [];
   };
+
+  /**
+   * Check if the maximum amount of rotors in used is good
+   * After the check we allow to use the machine and don't allow more rotor selection
+   *
+   * @param {Event} event The click event
+   */
+  const checkMaxRotors = (event: Event): void => {
+    const rotorLimit: number = 3;
+
+    if (usedRotors.length > rotorLimit) {
+      //unchecking the fourth checkbox checked
+      //@ts-ignore
+      event.currentTarget.checked = false;
+
+      return;
+    }
+
+    //activating the machine when there is three rotors
+    usedRotors.length === rotorLimit
+      ? (machineActive = true)
+      : (machineActive = false);
+    //passing the used rotors to the rotor class
+    usedRotors.forEach((rotor) => {
+      rotor.rotorsUsed = usedRotors;
+    });
+  };
 </script>
 
 <svelte:window
@@ -101,9 +136,37 @@
     Your ciphered keys : {cipheredKeyHistory.join("")}
   </p>
 
-  <input type="radio" bind:group={reflectorIndex} value={0} name="reflector" />
-  <input type="radio" bind:group={reflectorIndex} value={1} name="reflector" />
-  <input type="radio" bind:group={reflectorIndex} value={2} name="reflector" />
+  <div class="reflectors">
+    {#each Reflectors as x, i}
+      <input
+        type="radio"
+        bind:group={reflectorIndex}
+        value={i}
+        id={"reflector_" + i.toString()}
+        hidden
+      />
+      <label
+        for={"reflector_" + i.toString()}
+        class:current={i === reflectorIndex}
+        >Reflector {alphabet[i].toUpperCase()}</label
+      >
+    {/each}
+  </div>
+
+  <div class="rotors">
+    {#each Rotors as rotor, i}
+      <input
+        type="checkbox"
+        bind:group={usedRotors}
+        value={rotor}
+        id={"rotor_" + i.toString()}
+        on:change={($event) => {
+          checkMaxRotors($event);
+        }}
+      />
+      <label for={"rotor_" + i.toString()}>Rotor {i}</label>
+    {/each}
+  </div>
 
   <div class="plugboard">
     {#each plugboardLetters as letterGroup}
@@ -140,6 +203,34 @@
     height: 100%;
     width: 100%;
 
+    .reflectors {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: center;
+      align-items: center;
+
+      label {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+
+        margin: 15px;
+        padding: 15px;
+        width: 150px;
+        font-size: 19px;
+
+        transition: 0.15s;
+        border: solid 1px black;
+      }
+      label:hover {
+        background: rgb(230, 230, 230);
+      }
+      label.current {
+        background: black;
+        color: white;
+      }
+    }
     .plugboard {
       display: flex;
       flex-flow: column nowrap;
