@@ -12,7 +12,7 @@ export class Rotor {
   /** The list of the ring setting of each rotor used */
   public rotorsSettings: number[] = [0, 0, 0];
   /** The starting position of each rotor used */
-  public rotorPosition: number[] = [5, 0, 0];
+  public rotorPosition: number[] = [0, 0, 0];
   /** If the machine was initialized with the right settings and position */
   private initialized: boolean = false;
 
@@ -28,22 +28,26 @@ export class Rotor {
   }
 
   /**
-   * Cipher the letters according to the input letter
+   * Cipher the letters according to the input letter and rotate them one time
    *
    * @param {string} letter The letter to cipher
+   * @param {boolean} rotation If the rotors have to rotate
    * @returns {string} The ciphered letter
    */
-  public cipher(letter: string): string {
+  public cipher(letter: string, rotation: boolean = false): string {
     if (!this.initialized) {
       //changing the encryption of each rotors
       this.changeEncryption();
       //setting the machine as initialized after the first encryption setting
       this.initialized = true;
     }
-    //rotating each rotor before encypting them
-    this.rotate();
+    if (rotation) {
+      //rotating each rotor before encypting them
+      this.rotate();
+    }
 
-    return "";
+    //encrypting the letter after the rotation and returning the encrypted letter
+    return this.encrypt(letter);
   }
 
   /**
@@ -76,20 +80,68 @@ export class Rotor {
       }
     });
   }
-  
+
   /**
    * Rotate the rotors according on their positions and their turnover
-  */
- private rotate(): void {
-   this.rotorsUsed.forEach((rotor) => {
-      console.log(rotor.wiring);
+   */
+  private rotate(): void {
+    this.rotorsUsed.forEach((rotor, index) => {
       //rotation the rotor wiring by one based on the rotor rotation
-      //the characters that have been rotated
-      let rotatedCharacters = rotor.wiring.slice(0, 1);
-      //removing the rotated characters to put them at the end of the string
-      rotor.wiring = rotor.wiring.replace(rotatedCharacters, "");
-      rotor.wiring += rotatedCharacters;
+      if (!this.initialized) {
+        //the characters that have been rotated
+        let rotatedCharacters = rotor.wiring.slice(0, 1);
+        //removing the rotated characters to put them at the end of the string
+        rotor.wiring = rotor.wiring.replace(rotatedCharacters, "");
+        rotor.wiring += rotatedCharacters;
+
+        return;
+      }
+      
+      //if it is the first rotor we always rotate it
+      if (index === 0) {
+        //the characters that have been rotated
+        let rotatedCharacters = rotor.wiring.slice(0, 1);
+        //removing the rotated characters to put them at the end of the string
+        rotor.wiring = rotor.wiring.replace(rotatedCharacters, "");
+        rotor.wiring = rotor.wiring + rotatedCharacters;
+      } else {
+        console.log(rotor.wiring, index);
+        //then for the other rotor we check the turnover position to rotate them at the right time*
+        if (
+          this.rotorsUsed[index - 1].turnover ===
+          this.rotorsUsed[index - 1].wiring[0]
+        ) {
+          console.log(
+            "rotating",
+            this.rotorsUsed[index - 1].wiring,
+            this.rotorsUsed[index - 1].turnover
+          );
+          //the characters that have been rotated
+          let rotatedCharacters = rotor.wiring.slice(0, 1);
+          //removing the rotated characters to put them at the end of the string
+          rotor.wiring = rotor.wiring.replace(rotatedCharacters, "");
+          rotor.wiring += rotatedCharacters;
+        } else {
+          return;
+        }
+      }
     });
+  }
+
+  /**
+   * Encrypt the letter based on the rotated
+   *
+   * @param {string} letter The letter to encrypt
+   * @returns {string} The encrypted letter
+   */
+  private encrypt(letter: string): string {
+    this.rotorsUsed.forEach((rotor) => {
+      let indexInAlphabet: number = this.alphabet.indexOf(letter);
+
+      letter = rotor.wiring[indexInAlphabet];
+    });
+
+    return letter;
   }
 }
 

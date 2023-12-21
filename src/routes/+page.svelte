@@ -47,9 +47,13 @@
       currentKey = cipherKey = pressedKey;
       pressedKeyHistory = [...pressedKeyHistory, currentKey];
 
+      //first passing through the plugboard
+      //then the rotors, after the reflector and after the rotors again
+      //finishing by the plugboard again
       cipherKey = plugboard.swap(cipherKey);
-      cipherKey = usedRotors[0].cipher(cipherKey);
+      cipherKey = usedRotors[0].cipher(cipherKey, true);
       cipherKey = Reflectors[reflectorIndex].reflect(cipherKey);
+      cipherKey = usedRotors[0].cipher(cipherKey);
       cipherKey = plugboard.swap(cipherKey);
 
       //adding the ciphered key to an array
