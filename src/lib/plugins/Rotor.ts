@@ -43,7 +43,7 @@ export class Rotor {
     }
     if (rotation) {
       //rotating each rotor before encypting them
-      this.rotate();
+      this.manageRotation();
     }
 
     //encrypting the letter after the rotation and returning the encrypted letter
@@ -76,34 +76,37 @@ export class Rotor {
 
       //rotating the rotor according to its initial rotor position
       for (let i = 0; i < this.rotorPosition[index]; i++) {
-        this.rotate();
+        this.manageRotation();
       }
     });
   }
 
   /**
+   * Rotate the wiring
+   */
+  private rotate(rotor: Rotor) {
+    //the characters that have been rotated
+    let rotatedCharacters = rotor.wiring.slice(0, 1);
+    //removing the rotated characters to put them at the end of the string
+    rotor.wiring = rotor.wiring.replace(rotatedCharacters, "");
+    rotor.wiring += rotatedCharacters;
+  }
+
+  /**
    * Rotate the rotors according on their positions and their turnover
    */
-  private rotate(): void {
+  private manageRotation(): void {
     this.rotorsUsed.forEach((rotor, index) => {
       //rotation the rotor wiring by one based on the rotor rotation
       if (!this.initialized) {
-        //the characters that have been rotated
-        let rotatedCharacters = rotor.wiring.slice(0, 1);
-        //removing the rotated characters to put them at the end of the string
-        rotor.wiring = rotor.wiring.replace(rotatedCharacters, "");
-        rotor.wiring += rotatedCharacters;
+        this.rotate(rotor);
 
         return;
       }
-      
+
       //if it is the first rotor we always rotate it
       if (index === 0) {
-        //the characters that have been rotated
-        let rotatedCharacters = rotor.wiring.slice(0, 1);
-        //removing the rotated characters to put them at the end of the string
-        rotor.wiring = rotor.wiring.replace(rotatedCharacters, "");
-        rotor.wiring = rotor.wiring + rotatedCharacters;
+        this.rotate(rotor);
       } else {
         console.log(rotor.wiring, index);
         //then for the other rotor we check the turnover position to rotate them at the right time*
@@ -116,11 +119,7 @@ export class Rotor {
             this.rotorsUsed[index - 1].wiring,
             this.rotorsUsed[index - 1].turnover
           );
-          //the characters that have been rotated
-          let rotatedCharacters = rotor.wiring.slice(0, 1);
-          //removing the rotated characters to put them at the end of the string
-          rotor.wiring = rotor.wiring.replace(rotatedCharacters, "");
-          rotor.wiring += rotatedCharacters;
+          this.rotate(rotor);
         } else {
           return;
         }
