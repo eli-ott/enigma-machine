@@ -108,7 +108,6 @@ export class Rotor {
       if (index === 0) {
         this.rotate(rotor);
       } else {
-        console.log(rotor.wiring, index);
         //then for the other rotor we check the turnover position to rotate them at the right time*
         if (
           this.rotorsUsed[index - 1].turnover ===
