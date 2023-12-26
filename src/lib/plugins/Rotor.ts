@@ -8,8 +8,6 @@ export class Rotor {
   public wiring: string;
   /** The rotor current position */
   private position: string = "abcdefghijklmnopqrstuvwxyz";
-  /** The ring wiring position */
-  public wiringPosition: string = "abcdefghijklmnopqrstuvwxyz";
   /** The rotor turnover position */
   public turnover: string;
   /** The rotors used in the machine */
@@ -78,18 +76,12 @@ export class Rotor {
     //get the characters that are changed when rotating
     let charactersPositionChanged = rotor.position.slice(0, 1);
     let charactersWiringChanged = rotor.wiring.slice(0, 1);
-    let charactersWirinigPositionChanged = rotor.wiringPosition.slice(0, 1);
     //removing duplicate characters
     rotor.position = rotor.position.replace(charactersPositionChanged, "");
     rotor.wiring = rotor.wiring.replace(charactersWiringChanged, "");
-    rotor.wiringPosition = rotor.wiringPosition.replace(
-      charactersWirinigPositionChanged,
-      ""
-    );
     //appending the new character at the end
     rotor.position += charactersPositionChanged;
     rotor.wiring += charactersWiringChanged;
-    rotor.wiringPosition += charactersWirinigPositionChanged;
   }
 
   /**
