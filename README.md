@@ -9,3 +9,5 @@ Good diagrams and explanations : https://www.tamdistrict.org/cms/lib/CA01000875/
 Rotors configurations : https://en.wikipedia.org/wiki/Enigma_rotor_details <br />
 Impressive 3D model : https://hackaday.io/project/184288-simplified-enigma-replica <br />
 All the wirings : https://www.cryptomuseum.com/crypto/enigma/wiring.htm#10 <br />
+Full explanations : https://www.ciphermachinesandcryptology.com/en/enigmatech.htm <br />
+Awesome emulator and impressive documentation and explanations : https://github.com/lubeskih/enigma-emulator <br />

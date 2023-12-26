@@ -7,6 +7,8 @@
   const alphabet: string = "abcdefghijklmnopqrstuvwxyz";
   /** If the machine is active and can be used */
   let machineActive: boolean = false;
+  /** If the machine was initialized with the right settings */
+  let machineInitialized: boolean = false;
   /** The key pressed by the user */
   let currentKey: string = "";
   /** The user input's history */
@@ -39,6 +41,9 @@
 
     let pressedKey = event.key.toLowerCase();
 
+    if(!machineInitialized) usedRotors[0].changeSettings();
+    machineInitialized = true;
+
     //changing the pressed key only if it is in the alphabet
     if (alphabet.includes(pressedKey)) {
       //the key to cipher
@@ -51,9 +56,9 @@
       //then the rotors, after the reflector and after the rotors again
       //finishing by the plugboard again
       cipherKey = plugboard.swap(cipherKey);
-      cipherKey = usedRotors[0].cipher(cipherKey, true);
+      cipherKey = usedRotors[0].cipher(cipherKey, true, false);
       cipherKey = Reflectors[reflectorIndex].reflect(cipherKey);
-      cipherKey = usedRotors[0].cipher(cipherKey);
+      cipherKey = usedRotors[0].cipher(cipherKey, false, true);
       cipherKey = plugboard.swap(cipherKey);
 
       //adding the ciphered key to an array
@@ -122,8 +127,8 @@
       ? (machineActive = true)
       : (machineActive = false);
     //passing the used rotors to the rotor class
-    usedRotors.forEach((rotor) => {
-      rotor.rotorsUsed = usedRotors;
+    usedRotors.forEach((rotor: Rotor) => {
+      rotor.usedRotors = usedRotors;
     });
   };
 </script>
